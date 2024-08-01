@@ -5,14 +5,17 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { z } from "zod";
+import { set, z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { authFormSchema } from "@/lib/utils";
 import CustomInput from "./CustomInput";
 import { Loader2 } from "lucide-react";
+import { signIn, signUp } from "@/lib/actions/users.actions";
+import { useRouter } from "next/navigation";
 
 const AuthForm = ({ type }: { type: string }) => {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const formSchema = authFormSchema(type);
@@ -27,13 +30,33 @@ const AuthForm = ({ type }: { type: string }) => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     setLoading(true);
-    console.log(values);
-    setLoading(false);
-  }
+    try {
+      // Sign-up with appwrite and create a plaid token
+      if (type === "sign-in") {
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (response) {
+          router.push("/");
+        }
+      }
+
+      if (type === "sign-up") {
+        const newUser = await signUp(data);
+        setUser(newUser);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section className="auth-form">
       <header className="flex flex-col gap-5 md:gap-8">
@@ -86,6 +109,12 @@ const AuthForm = ({ type }: { type: string }) => {
                     name="address1"
                     label="Address"
                     placeholder="Enter your address"
+                  />
+                  <CustomInput
+                    control={form.control}
+                    name="city"
+                    label="city"
+                    placeholder="Enter your city"
                   />
                   <div className="flex gap-4">
                     {" "}
