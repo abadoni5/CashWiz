@@ -1,17 +1,21 @@
-'use client'
+"use client";
 import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import Footer from "./Footer";
 
 const Sidebar = ({ user }: SiderbarProps) => {
   const pathname = usePathname();
   return (
     <section className="sidebar">
       <nav className="flex flex-col gap-4">
-        <Link href="/" className="mb-12 cursor-pointer flex items-center gap-2 px-4">
+        <Link
+          href="/"
+          className="mb-12 cursor-pointer flex items-center gap-2 px-4"
+        >
           <Image
             src="/icons/logo.svg"
             width={34}
@@ -21,7 +25,6 @@ const Sidebar = ({ user }: SiderbarProps) => {
           />
           <h1 className="sidebar-logo">CashWiz</h1>
         </Link>
-
         {sidebarLinks.map((item) => {
           const isActive =
             pathname === item.route || pathname.startsWith(`${item.route}/`);
@@ -48,8 +51,9 @@ const Sidebar = ({ user }: SiderbarProps) => {
             </Link>
           );
         })}
-
+        USER
       </nav>
+      <Footer user={user} type="mobile"/>
     </section>
   );
 };
