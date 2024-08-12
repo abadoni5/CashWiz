@@ -9,8 +9,8 @@ import { parseStringify } from "../utils";
 export const signIn = async ({ email, password }: signInProps) => {
   try {
     const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(email, password);
-    return parseStringify(session);
+    const response = await account.createEmailPasswordSession(email, password);
+    return parseStringify(response);
   } catch (error) {
     console.error("Error", error);
   }
@@ -45,7 +45,7 @@ export const signUp = async (userData: SignUpParams) => {
 
 // ... your initilization functions
 
-export async function getLoggedInUser() {
+export async function  getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
     const user = await account.get();

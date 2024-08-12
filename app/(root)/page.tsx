@@ -6,6 +6,7 @@ import { getLoggedInUser } from "@/lib/actions/users.actions";
 
 const Home = async () => {
   const loggedIn = await getLoggedInUser();
+  console.log(loggedIn);
   return (
     <section className="home">
       <div className="home-content">
@@ -13,7 +14,7 @@ const Home = async () => {
           <HeaderBox
             type="greeting"
             title="Welcome"
-            user={loggedIn?.name|| "Guest"}
+            user={loggedIn?.name || "Guest"}
             subtext="Personal finance management made easy"
           />
 

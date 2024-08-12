@@ -13,6 +13,7 @@ import CustomInput from "./CustomInput";
 import { Loader2 } from "lucide-react";
 import { signIn, signUp } from "@/lib/actions/users.actions";
 import { useRouter } from "next/navigation";
+import PlaidLink from "./PlaidLink";
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
@@ -35,7 +36,11 @@ const AuthForm = ({ type }: { type: string }) => {
     // ✅ This will be type-safe and validated.
     setLoading(true);
     try {
-      // Sign-up with appwrite and create a plaid token
+      if (type === "sign-up") {
+        const newUser = await signUp(data);
+        setUser(newUser);
+      }
+
       if (type === "sign-in") {
         const response = await signIn({
           email: data.email,
@@ -43,16 +48,15 @@ const AuthForm = ({ type }: { type: string }) => {
         });
 
         if (response) {
+          console.log(response);
+          console.log("Logged in");
           router.push("/");
+        } else {
+          console.log("Error loggining in");
         }
       }
-
-      if (type === "sign-up") {
-        const newUser = await signUp(data);
-        setUser(newUser);
-      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -82,9 +86,11 @@ const AuthForm = ({ type }: { type: string }) => {
           </h1>
         </div>
       </header>
-      {user ? (
-        <div className="flex flex-col gap-4">Plaid Link</div>
-      ) : (
+      {/* {user ? ( */}
+        <div className="flex flex-col gap-4">
+          <PlaidLink user={user} variant="primary"/>
+        </div>
+      {/* ) : ( */}
         <>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -192,7 +198,7 @@ const AuthForm = ({ type }: { type: string }) => {
             </Link>
           </footer>
         </>
-      )}
+      {/* )} */}
     </section>
   );
 };
